@@ -25,7 +25,7 @@ Barrel::~Barrel()
 {
 }
 
-void Barrel::display(float offsetZ, bool leftRight,bool barrelPressed)
+void Barrel::display(float offsetZ,bool barrelPressed)
 {
 
     glDisable(GL_LIGHTING);
@@ -46,7 +46,7 @@ void Barrel::display(float offsetZ, bool leftRight,bool barrelPressed)
         glColor3f(100.f, 100.f, 100.f);
     }
 
-    drawBarrel(leftRight,offsetZ,barrelQuadric_);
+    drawBarrel(offsetZ,barrelQuadric_);
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
 
@@ -54,23 +54,11 @@ void Barrel::display(float offsetZ, bool leftRight,bool barrelPressed)
 
 }
 
-void Barrel::drawBarrel(bool leftRight,uint64_t offsetZ,GLUquadric * quadrique){
-
-
+void Barrel::drawBarrel(float offsetZ,GLUquadric * quadrique){
 
 
     glPushMatrix();
-
-    if (leftRight){
-        //glTranslated(-5.0,0.0,tz-timeElapsed%int(tz)-1.5);
-        glTranslated(-5.0,0.0,offsetZ);
-    }
-    else
-    {
-        //glTranslated(5.0,0.0,tz-timeElapsed%int(tz)-1.5);
-        glTranslated(5.0,0.0,offsetZ);
-
-    }
+    glTranslated(-5.0,0.0,offsetZ);
 
 
     glRotated(-90,1,0,0);

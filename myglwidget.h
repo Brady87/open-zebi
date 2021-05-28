@@ -3,7 +3,7 @@
 #include "barrel.h"
 #include "gauge.h"
 #include "stopzone.h"
-//#include "webcaminterface.h"
+#include "webcam.h"
 #include <QOpenGLWidget>
 #include <QKeyEvent>
 #include <iostream>
@@ -38,14 +38,14 @@ public:
     Ground *environment=new Ground();
     Gauge *gauge=new Gauge();
     Barrel *barils;
-    StopZone *stopZone=new StopZone(myCar,timeElapsed);
+    StopZone *stopZone=new StopZone(myCar);
 
     // Gestion des arrêts
     bool isStopZone=false;
     int countdown=50;
 
     //Barils pressés ou non
-    bool barrelPressed=false;
+    bool barrelClicked=false;
 
     // Rafraichissement
     float timeElapsed { 0.0f };
@@ -55,6 +55,7 @@ public:
 
 
     // Webcam
+    Webcam webcam;
     VideoCapture cap;
 
     //Angle et distance des poings
@@ -85,6 +86,6 @@ private slots:
 private:
     void insideStopZone();
     void hitManager();
-    void emptyFuelManager();
+    void fuelManager();
     void mousePressEvent(QMouseEvent* event);
 };

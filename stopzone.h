@@ -11,14 +11,15 @@
 class StopZone
 {
 public:
-    StopZone(Car *voiture,float timeElapsed);
-    void display(bool barrelPressed1);
+    StopZone(Car *voiture);
+    void display(bool barrelPressed1,float timeElapsed);
     float* getCoord(){return coord;}
-    Barrel *baril1;
+    Barrel barrel;
     bool m_barrelPressed=false;
 private:
     float length;
     float* coord=new float[3];
+    int parkingUsed;
 
 };
 

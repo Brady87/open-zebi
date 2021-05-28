@@ -16,8 +16,8 @@ private:
 public:
     Barrel();
     ~Barrel();
-    void display(float offsetZ, bool leftRight,bool barrelPressed);
-    void drawBarrel(bool leftRight,uint64_t offsetZ,GLUquadric * quadrique);
+    void display(float offsetZ, bool barrelPressed);
+    void drawBarrel(float offsetZ,GLUquadric * quadrique);
 private:
     GLuint* textureID_=new GLuint[1];
 };

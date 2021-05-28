@@ -6,27 +6,6 @@
 // Declarations des constantes
 const unsigned int WIN = 900;
 
-Point findCenter(Rect rectangle){
-    return Point(rectangle.x+int(rectangle.width/2),rectangle.y+int(rectangle.height/2));
-}
-
-float processDistance(Point point1,Point point2){
-    return sqrt((point1.x-point2.x)*(point1.x-point2.x)+(point1.y-point2.y)*(point1.y-point2.y));
-}
-
-float processAngle(Point point1, Point point2){
-    if (point1.x<point2.x)
-    {
-        // Si le point1 a une abscisse plus petite que le 2 : main gauche
-        return atan(float(point2.y-point1.y)/float(point2.x-point1.x))*180.0/3.14;
-    }
-    else{
-        // Sinon le point1 : main droite
-        return atan(float(point1.y-point2.y)/float(point1.x-point2.x))*180.0/3.14;
-    }
-
-}
-
 // Constructeur
 MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
 {
@@ -34,32 +13,6 @@ MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
     // Reglage de la taille/position
     setFixedSize(WIN, WIN);
     move(QApplication::desktop()->screen()->rect().center() - rect().center());
-
-    //Ouverture de la webcam
-
-    int frameWidth=640;
-    int frameHeight=480;
-
-
-    cap=VideoCapture(0); // open the default camera
-    cout<<"width :"<<cap.get(CAP_PROP_FRAME_WIDTH)<<endl;
-    cout<<"height :"<<cap.get(CAP_PROP_FRAME_HEIGHT)<<endl;
-    cap.set(CAP_PROP_FRAME_WIDTH,frameWidth);
-    cap.set(CAP_PROP_FRAME_HEIGHT,frameHeight);
-    if(!cap.isOpened())  // check if we succeeded
-    {
-        cerr<<"Error openning the default camera"<<endl;
-    }
-
-
-    if(!face_cascade.load("C:/Users/thoma/Documents/ProjetBDM/res/fistCascade.xml"))
-    {
-        cerr<<"Error loading haarcascade"<<endl;
-    }
-
-    // Init output window
-    namedWindow("WebCam",1);
-
 
     //Gestion du temps
     animationTimer.setInterval(15);
@@ -139,65 +92,33 @@ void MyGLWidget::paintGL()
 {
 
     // Récupération de l'image webcam
+    webcam.capturingFrame();
 
-    Mat frame,frame_gray;
-    std::vector<Rect> fists;
-    std::vector<Point> fistsCenter;
-    // Get frame
-    cap >> frame;
-    // Mirror effect
-    cv::flip(frame,frame,1);
-    // Convert to gray
-    cv::cvtColor(frame,frame_gray,COLOR_BGR2GRAY);
-    //-- Detect fists
-    face_cascade.detectMultiScale(frame_gray, fists, 1.1, 4, 0, Size(60, 60));
-    if (fists.size()>0)
-    {
-        // Process and draw fists center
-        for (int i=0;i<(int)fists.size();i++){
-            circle(frame,findCenter(fists[i]),10,Scalar(255),10);
-        }
-        if ((int)fists.size()>=2)
-        {
-            //Si on détecte au moins 2 poings
-            angle=processAngle(findCenter(fists[0]),findCenter(fists[1]));
-            distance=processDistance(findCenter(fists[0]),findCenter(fists[1]));
-        }
-
-        else
-        {
-            angle=0;
-            distance=0.0;
-        }
-
-    }
-
-    // Display frame
-    imshow("WebCam", frame);
-
+    // Récupération des valeurs de distance et d'angle entre les poings
+    angle=webcam.getAngle();
+    distance=webcam.getDistance();
 
     //Vérifie si zone d'arrêt
     insideStopZone();
 
-
     //Zone d'arrêt
     if(isStopZone && countdown>=0){
-        //Si on est arrêté
+        // Si on est dans une zone d'arrêt on s'arrête
         increment=0.0f;
         countdown-=1;
         angle=0;
     }
     else if (countdown<0)
     {
-        //On quitte la zone d'arrêt
+        //On quitte la zone d'arrêt si le compte à rebours dans la zone d'arrêt est fini
         increment=1.0f;
         countdown=50;
         myCar->parked();
-        barrelPressed=false;
+        barrelClicked=false;
     }
 
-    else if (distance<300 && distance>0){
-        // Arrêt si les poings sont proches
+    else if (distance<300 && distance!=0){
+        // On s'arrête si les poings sont proches mais que la distance n'est pas nulle
         increment=0.0f;
         angle=0;
     }
@@ -211,17 +132,17 @@ void MyGLWidget::paintGL()
     environment->display(timeElapsed);
     gauge->display();
 
-
     // Zone d'arrêt
-    stopZone=new StopZone(myCar,timeElapsed);
-    stopZone->display(barrelPressed);
+    // Si on ne recrée par une zone d'arrêt les barils ne sont pas texturés
+    stopZone=new StopZone(myCar);
+    stopZone->display(barrelClicked,timeElapsed);
     if (stopZone->getCoord()[2]<=-3){
         // Si les barils sont passés en négatifs on les reremplis
-        barrelPressed=false;
+        barrelClicked=false;
     }
 
 
-    // Voiture principale
+    // Voiture principale tourne
     myCar->turn(0.4/45.0*angle);
 
     // Rafraichissement des voitures
@@ -231,18 +152,15 @@ void MyGLWidget::paintGL()
     opponentCar4->display(timeElapsed);
     myCar->display(timeElapsed);
 
-
-
-
     //Gestion des collisions
     hitManager();
 
     // Vérifie s'il reste de l'essence
-    emptyFuelManager();
+    fuelManager();
+
 
 
 }
-
 
 // Fonction de gestion d'interactions clavier
 void MyGLWidget::keyPressEvent(QKeyEvent * event)
@@ -251,6 +169,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent * event)
     {
     case Qt::Key_Q:
     {
+        // On arrête le raffraichissement du jeu
         animationTimer.stop();
         int reponse = QMessageBox::question(this, "Fermer", "Voulez-vous vraiment quitter la partie ? \n Score actuel : "+QString::fromStdString(std::to_string(int(timeElapsed))), QMessageBox ::Yes | QMessageBox::No);
 
@@ -259,6 +178,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent * event)
             exit(0);
         }
         else{
+            // On reprend le raffraichissement du jeu
             animationTimer.start();
         }
         break;
@@ -274,9 +194,10 @@ void MyGLWidget::keyPressEvent(QKeyEvent * event)
     }
     }
 
-    // Acceptation de l'evenement et mise a jour de la scene
+    // Acceptation de l'événement et màj de la scène
     event->accept();
     update();
+    increment+=0.05;
 }
 
 
@@ -292,7 +213,8 @@ void MyGLWidget::insideStopZone(){
 
 }
 
-void MyGLWidget::emptyFuelManager(){
+void MyGLWidget::fuelManager(){
+    // Vérifie qu'il reste encore de l'essence
     if (gauge->getRate()<=0){
         animationTimer.stop();
         QMessageBox::information(this, "Perdu", "Vous êtes à sec. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
@@ -301,29 +223,29 @@ void MyGLWidget::emptyFuelManager(){
 }
 
 void MyGLWidget::hitManager(){
-    //Gestion des collisions entre maVoiture et les voitures voitureOpposee
+    // Gestion des collisions entre ma voiture myCar et les 4 voitures adverses opponentCar
     if(abs(myCar->getCoord()[0]-opponentCar1->getCoord()[0])<0.8 &&
             abs(myCar->getCoord()[2]-opponentCar1->getCoord()[2])<0.8){
         animationTimer.stop();
         QMessageBox::about(this,"Perdu","Aïe, collision. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
         exit(0);
     }
-    if(abs(myCar->getCoord()[0]-opponentCar2->getCoord()[0])<0.8 &&
+    else if(abs(myCar->getCoord()[0]-opponentCar2->getCoord()[0])<0.8 &&
             abs(myCar->getCoord()[2]-opponentCar2->getCoord()[2])<0.8){
         animationTimer.stop();
-        QMessageBox::about(this,"Perdu","Aïe, collision. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
+        QMessageBox::about(this,"Perdu","Ouille, collision. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
         exit(0);
     }
-    if(abs(myCar->getCoord()[0]-opponentCar3->getCoord()[0])<0.8 &&
+    else if(abs(myCar->getCoord()[0]-opponentCar3->getCoord()[0])<0.8 &&
             abs(myCar->getCoord()[2]-opponentCar3->getCoord()[2])<0.8){
         animationTimer.stop();
         QMessageBox::about(this,"Perdu","Aïe, collision. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
         exit(0);
     }
-    if(abs(myCar->getCoord()[0]-opponentCar4->getCoord()[0])<0.8 &&
+    else if(abs(myCar->getCoord()[0]-opponentCar4->getCoord()[0])<0.8 &&
             abs(myCar->getCoord()[2]-opponentCar4->getCoord()[2])<0.8){
         animationTimer.stop();
-        QMessageBox::about(this,"Perdu","Aïe, collision. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
+        QMessageBox::about(this,"Perdu","Ouille, collision. Votre score est de : "+QString::fromStdString(std::to_string(int(timeElapsed))));
         exit(0);
     }
 }
@@ -332,6 +254,7 @@ void MyGLWidget::hitManager(){
 
 
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
+    // Gestion des clics sur les barils
     if(event->button() == Qt::LeftButton){
         GLint hits;
         GLuint selectBuf[512];
@@ -364,7 +287,8 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         gluQuadricDrawStyle(barrelQuadric_, GLU_FILL);
 
         glPushMatrix();
-        stopZone->baril1->drawBarrel(true,stopZone->getCoord()[2]+2.0,barrelQuadric_);
+        // Baril cliquable
+        stopZone->barrel.drawBarrel(stopZone->getCoord()[2]+2.0,barrelQuadric_);
         glPopMatrix();
 
 
@@ -375,11 +299,11 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         hits = glRenderMode(GL_RENDER);
         qDebug()<<hits;
         if (hits == 1){
-            if (!barrelPressed){
+            if (!barrelClicked){
                 // Si le baril n'a pas été cliqué on fait le plein
                 gauge->addFuel();
             }
-            barrelPressed = true;
+            barrelClicked = true;
             event->accept();
             update();
         }

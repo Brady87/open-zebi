@@ -30,8 +30,8 @@ SOURCES += \
     gauge.cpp \
     main.cpp \
     myglwidget.cpp \
-    stopwatch.cpp \
-    stopzone.cpp
+    stopzone.cpp \
+    webcam.cpp
 
 HEADERS += \
     ground.h \
@@ -39,8 +39,8 @@ HEADERS += \
     car.h \
     gauge.h \
     myglwidget.h \
-    stopwatch.h \
-    stopzone.h
+    stopzone.h \
+    webcam.h
 
 INCLUDEPATH +=$$(OPENCV_DIR)\..\..\include
 

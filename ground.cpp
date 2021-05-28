@@ -3,6 +3,7 @@
 Ground::Ground()
 {
 
+    //Image des textures
 
     QImage qim_TextureGrass_=QGLWidget::convertToGLFormat(QImage(":/grass.jpg"));
     QImage qim_TextureRoad_=QGLWidget::convertToGLFormat(QImage(":/road.jpg"));
@@ -13,7 +14,7 @@ Ground::Ground()
 
     glGenTextures(3,m_TextureID_);
 
-    //Sky
+    // Ciel
 
     glBindTexture(GL_TEXTURE_2D,m_TextureID_[2]);
     glTexImage2D(GL_TEXTURE_2D,0,4,qim_TextureSky_.width(),qim_TextureSky_.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,qim_TextureSky_.bits());
@@ -23,7 +24,7 @@ Ground::Ground()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    //Grass
+    // Bas-côté
     glBindTexture(GL_TEXTURE_2D,m_TextureID_[0]);
 
     glTexImage2D(GL_TEXTURE_2D,0,4,qim_TextureGrass_.width(),qim_TextureGrass_.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,qim_TextureGrass_.bits());
@@ -34,7 +35,7 @@ Ground::Ground()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    //Road
+    // Route
 
     glBindTexture(GL_TEXTURE_2D,m_TextureID_[1]);
 
@@ -54,12 +55,11 @@ Ground::~Ground()
 void Ground::display(uint64_t timeElapsed)
 {
 
-    //Color
 
     float grassShift = timeElapsed / 5.0;
 
 
-    // Grass
+    // Bas-côté
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D,m_TextureID_[0]);
 
@@ -75,8 +75,7 @@ void Ground::display(uint64_t timeElapsed)
 
     glDisable(GL_TEXTURE_2D);
 
-    // Road
-
+    // Route
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D,m_TextureID_[1]);
 
@@ -93,7 +92,7 @@ void Ground::display(uint64_t timeElapsed)
     glDisable(GL_TEXTURE_2D);
 
 
-    // Sky
+    // Ciel
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D,m_TextureID_[2]);

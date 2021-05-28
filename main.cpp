@@ -1,6 +1,5 @@
 #include <QApplication>
 #include "myglwidget.h"
-#include "webcaminterface.h"
 
 int main(int argc, char *argv[])
 {
