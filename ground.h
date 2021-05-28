@@ -11,6 +11,7 @@
 class Ground
 {
 private:
+    // Images textures
     QImage qim_TextureGrass_;
     QImage qim_TextureRoad_;
     QImage qim_TextureSky_;
@@ -24,7 +25,7 @@ public:
     ~Ground();
 
     // Methode d'affichage
-    void display(uint64_t timeElapsed);
+    void display(float timeElapsed);
 };
 
 #endif // GROUND_H

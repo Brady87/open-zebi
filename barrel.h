@@ -10,16 +10,20 @@
 class Barrel
 {
 private:
+    // A été cliqué
     bool prevClicked=false;
+
+    // Coordonnées du baril
     float *coord = new float(3);
+
+    // Texture
+    GLuint* textureID_=new GLuint[1];
 
 public:
     Barrel();
     ~Barrel();
     void display(float offsetZ, bool barrelPressed);
     void drawBarrel(float offsetZ,GLUquadric * quadrique);
-private:
-    GLuint* textureID_=new GLuint[1];
 };
 
 #endif // BARREL_H

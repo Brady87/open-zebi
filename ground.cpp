@@ -52,7 +52,7 @@ Ground::~Ground()
 {
 }
 
-void Ground::display(uint64_t timeElapsed)
+void Ground::display(float timeElapsed)
 {
 
 

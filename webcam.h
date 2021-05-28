@@ -14,15 +14,22 @@ using namespace std;
 class Webcam
 {
 private:
+    // Fichier webcam
     VideoCapture cap;
+
+    // Fichier cascade de Haar
     CascadeClassifier face_cascade;
+
+    // Angle et distance des poings
     float angle;
     float distance;
+
+    // Image
     Mat frame;
 public:
     Webcam();
+    // Capture, affiche l'image de cap et calcule les poings (angle et distance)
     void capturingFrame();
-    void processingDistanceAndAngle();
     float getAngle() const;
     void setAngle(float value);
     float getDistance() const;

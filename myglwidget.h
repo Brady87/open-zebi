@@ -4,6 +4,7 @@
 #include "gauge.h"
 #include "stopzone.h"
 #include "webcam.h"
+
 #include <QOpenGLWidget>
 #include <QKeyEvent>
 #include <iostream>
@@ -23,21 +24,26 @@ using namespace std;
 // Classe dediee a l'affichage d'une scene OpenGL
 class MyGLWidget : public QOpenGLWidget
 {
-public:
-
-    // Constructeur
-    MyGLWidget(QWidget * parent = nullptr);
-
+private:
     //Objets
+
+    //Voitures
     Car *myCar = new Car(false,0.0,0.0);
     Car *opponentCar1=opponentCar1=new Car(true,2.0,0.0);
     Car *opponentCar2=new Car(true,-2.0,-20.0);
     Car *opponentCar3=new Car(true,0.0,-53.0);
     Car *opponentCar4 =new Car(true,-4.0,-70.0);
 
+    //Sol, ciel et route
     Ground *environment=new Ground();
+
+    //Jauge d'essence
     Gauge *gauge=new Gauge();
+
+    // Barils d'essence
     Barrel *barils;
+
+    //Zone d'arrêt
     StopZone *stopZone=new StopZone(myCar);
 
     // Gestion des arrêts
@@ -47,7 +53,7 @@ public:
     //Barils pressés ou non
     bool barrelClicked=false;
 
-    // Rafraichissement
+    // Rafraichissement par un timer
     float timeElapsed { 0.0f };
     QTimer animationTimer;
     QTimer pauseTimer;
@@ -79,11 +85,9 @@ protected:
     // Fonction de gestion d'interactions clavier
     void keyPressEvent(QKeyEvent* event);
 
-
-private slots:
-
-    void countingTime();
-private:
+public:
+    // Constructeur
+    MyGLWidget(QWidget * parent = nullptr);
     void insideStopZone();
     void hitManager();
     void fuelManager();

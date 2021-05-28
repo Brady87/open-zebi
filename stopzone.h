@@ -10,16 +10,19 @@
 
 class StopZone
 {
+
+private:
+    float length;
+    float* coord=new float[3];
+
+    // Nombre de parking effectué par la voiture principale
+    int parkingUsed;
+
 public:
     StopZone(Car *voiture);
     void display(bool barrelPressed1,float timeElapsed);
     float* getCoord(){return coord;}
     Barrel barrel;
-    bool m_barrelPressed=false;
-private:
-    float length;
-    float* coord=new float[3];
-    int parkingUsed;
 
 };
 

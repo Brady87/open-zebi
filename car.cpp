@@ -184,6 +184,8 @@ void Car::drawFlashingLights(float timeElapsed)
 
 void Car::turn(float angle){
     coord[0]+=angle;
+
+    // Gestion des bords
     if (coord[0]<=-4){
         coord[0]=-4;
     }

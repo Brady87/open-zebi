@@ -10,6 +10,7 @@
 class Gauge
 {
 private:
+    // Taux remplissage , 1: plein / 0: vide
     float rate=1;
 public:
     Gauge();

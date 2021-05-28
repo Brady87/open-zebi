@@ -13,6 +13,7 @@ class Car
 
 private:
     //Propriétés extrinsèques de la voiture
+    // Coordonnées
     float coord[3];
 
     //Propriétés intrinsèques de la voiture
@@ -21,24 +22,22 @@ private:
     const float WIDTH=1.0;
     const float LENGTH=2.0;
     const float SIZE_WHEEL=0.5;
+
+    // Temps écoulée
     float timeElapsed;
+
+    // Voiture opposante ?
     bool isOpponent;
+
+    // Nombre de parking antérieur
     int parkingUsed=0;
+
+    // Décalage sur la profondeur
     float zShift=0.0;
 
+    // Quadrique
     GLUquadric* wheelQuadric_ = nullptr;
 
-
-
-protected :
-    void drawCar() ;
-    void drawWheel() ;
-    void drawFlashingLights(float timeElapsed) ;
-
-
-
-private slots:
-    void changeColorFlashingLights();
 
 public:
 
@@ -50,15 +49,22 @@ public:
 
     // Methode d'affichage
     void display(float timeElapsed);
+    void drawCar() ;
+    void drawWheel() ;
+    void drawFlashingLights(float timeElapsed) ;
+
 
     //Tourner à droite et à gauche
     void turn(float angle);
+
+    // Getters et Setters
     float getLength(){return LENGTH;}
     float* getCoord(){return coord;}
     int getParkingUsed(){return parkingUsed;}
 
     //Se garer
     void parked(){parkingUsed++;}
+
 
 };
 
