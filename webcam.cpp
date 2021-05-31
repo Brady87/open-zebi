@@ -84,9 +84,6 @@ float Webcam::getDistance() const {
     return distance;
 }
 
-void Webcam::setDistance(float value) {
-    distance = value;
-}
 
 float Webcam::getAngle() const {
     return angle;
