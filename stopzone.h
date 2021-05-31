@@ -8,21 +8,30 @@
 #include "car.h"
 #include "barrel.h"
 
-class StopZone
-{
+class StopZone {
 
 private:
+    //longueur de la voiture
     float length;
-    float* coord=new float[3];
+
+    float *coord = new float[3];
+    Barrel barrel;
+
 
     // Nombre de parking effectué par la voiture principale
     int parkingUsed;
 
 public:
     StopZone(Car *voiture);
-    void display(bool barrelPressed1,float timeElapsed);
-    float* getCoord(){return coord;}
-    Barrel barrel;
+
+    //fonction d'affichage
+    void display(bool barrelPressed1, float timeElapsed);
+
+    //renvoie les coordonnées
+    float *getCoord() { return coord; }
+
+    //rPermet d'acceder au barril
+    Barrel getBarrel() { return barrel; }
 
 };
 

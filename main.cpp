@@ -1,12 +1,10 @@
 #include <QApplication>
 #include "myglwidget.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
     // Creation de l'application QT
     QApplication app(argc, argv);
-
 
 
     // Creation du widget

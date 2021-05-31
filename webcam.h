@@ -10,9 +10,7 @@ using namespace cv;
 using namespace std;
 
 
-
-class Webcam
-{
+class Webcam {
 private:
     // Fichier webcam
     VideoCapture cap;
@@ -28,14 +26,18 @@ private:
     Mat frame;
 public:
     Webcam();
+
     // Capture, affiche l'image de cap et calcule les poings (angle et distance)
     void capturingFrame();
+
+    // renvoie l'angle entre les 2 poings
     float getAngle() const;
-    void setAngle(float value);
+
+    // renvoie la distance entre les 2 poings
     float getDistance() const;
-    void setDistance(float value);
+
+    //renvoie la frame
     Mat getFrame() const;
-    void setFrame(const Mat &value);
 };
 
 #endif // WEBCAM_H

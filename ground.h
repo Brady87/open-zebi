@@ -7,15 +7,14 @@
 #include <QGLWidget>
 #include "barrel.h"
 
-// Classe dediee pour la gestion du sol
-class Ground
-{
+// Classe dediée à l'affichage du sol & du ciel
+class Ground {
 private:
     // Images textures
     QImage qim_TextureGrass_;
     QImage qim_TextureRoad_;
     QImage qim_TextureSky_;
-    GLuint* m_TextureID_=new GLuint[3];
+    GLuint *m_TextureID_ = new GLuint[3];
 public:
 
     // Constructeur avec parametres

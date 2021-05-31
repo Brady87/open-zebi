@@ -20,44 +20,40 @@ using namespace cv;
 using namespace std;
 
 
-
 // Classe dediee a l'affichage d'une scene OpenGL
-class MyGLWidget : public QOpenGLWidget
-{
+class MyGLWidget : public QOpenGLWidget {
 private:
-    //Objets
-
     //Voitures
-    Car *myCar = new Car(false,0.0,0.0);
-    Car *opponentCar1=opponentCar1=new Car(true,2.0,0.0);
-    Car *opponentCar2=new Car(true,-2.0,-20.0);
-    Car *opponentCar3=new Car(true,0.0,-53.0);
-    Car *opponentCar4 =new Car(true,-4.0,-70.0);
+    Car *myCar = new Car(false, 0.0, 0.0);
+    Car *opponentCar1 = opponentCar1 = new Car(true, 2.0, 0.0);
+    Car *opponentCar2 = new Car(true, -2.0, -20.0);
+    Car *opponentCar3 = new Car(true, 0.0, -53.0);
+    Car *opponentCar4 = new Car(true, -4.0, -70.0);
 
     //Sol, ciel et route
-    Ground *environment=new Ground();
+    Ground *environment = new Ground();
 
     //Jauge d'essence
-    Gauge *gauge=new Gauge();
+    Gauge *gauge = new Gauge();
 
     // Barils d'essence
     Barrel *barils;
 
     //Zone d'arrêt
-    StopZone *stopZone=new StopZone(myCar);
+    StopZone *stopZone = new StopZone(myCar);
 
     // Gestion des arrêts
-    bool isStopZone=false;
-    int countdown=50;
+    bool isStopZone = false;
+    int countdown = 50;
 
     //Barils pressés ou non
-    bool barrelClicked=false;
+    bool barrelClicked = false;
 
     // Rafraichissement par un timer
-    float timeElapsed { 0.0f };
+    float timeElapsed{0.0f};
     QTimer animationTimer;
     QTimer pauseTimer;
-    float increment=1.0f;
+    float increment = 1.0f;
 
 
     // Webcam
@@ -71,8 +67,7 @@ private:
     // Fichier Classifieur
     CascadeClassifier face_cascade;
 
-protected:
-
+public:
     // Fonction d'initialisation
     void initializeGL();
 
@@ -83,13 +78,16 @@ protected:
     void paintGL();
 
     // Fonction de gestion d'interactions clavier
-    void keyPressEvent(QKeyEvent* event);
+    void keyPressEvent(QKeyEvent *event);
 
-public:
-    // Constructeur
-    MyGLWidget(QWidget * parent = nullptr);
+    // Constructeurs
+    MyGLWidget(QWidget *parent = nullptr);
+
     void insideStopZone();
+
     void hitManager();
+
     void fuelManager();
-    void mousePressEvent(QMouseEvent* event);
+
+    void mousePressEvent(QMouseEvent *event);
 };
